@@ -23,6 +23,8 @@ def a_star_search(G, start, goal):
         
         
         for neighbor in G.neighbors(current):
+
+     
             edge_data = G.get_edge_data(current, neighbor)
             #print(f"Current edge data from {current} to {neighbor}: {edge_data}")
             if edge_data:
@@ -59,3 +61,36 @@ def a_star_search(G, start, goal):
 
     return path, cost_so_far.get(goal, float('inf'))
 
+
+def bfs_search(G, start, goal, max_depth=13):
+    def bfs_with_depth_limit(start, depth_limit):
+        queue = [(start, [start], 0)]  # Node, path to node, and cost to reach node
+        while queue:
+            current, path, cost = queue.pop(0)
+            print(f"Processando nó: {current}, Profundidade Atual: {len(path) - 1}")
+            if current == goal:
+                print("Objetivo alcançado. Preparando para sair...")
+                return path, cost
+            if len(path) - 1 < depth_limit:  # Check if the current depth is within the limit
+                for neighbor in G.neighbors(current):
+                    if neighbor not in path:  # Prevent cycles
+                        edge_data = G.get_edge_data(current, neighbor)
+                            #print(f"Current edge data from {current} to {neighbor}: {edge_data}")
+                        if edge_data:
+                            # Itera sobre cada conexão (caso existam múltiplas arestas entre dois nós)
+                            for key, attr in edge_data.items():
+                                weight = attr.get('weight')
+                                if weight is None:
+                                    weight = 10
+                        #print("Weight not set for this connection.")
+                        queue.append((neighbor, path + [neighbor], cost + weight))
+        return [], float('inf')  # If the goal is not found within the depth limit
+
+    for depth in range(max_depth + 1):
+        print(f"Tentando com limite de profundidade: {depth}")
+        path, cost = bfs_with_depth_limit(start, depth)
+        if path:  # If a path is found or if we decide to stop at some condition
+            return path, cost
+
+    print(f"Nenhum caminho encontrado dentro do limite de profundidade de {max_depth}.")
+    return [], float('inf')
