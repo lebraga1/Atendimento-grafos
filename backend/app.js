@@ -13,11 +13,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get("/", (req, res) => { res.sendFile(__dirname + "/public/index.html") });
 
 app.post('/map', (req, res) => {
-    console.log(req.body)
-    let lat = req.body.lat;
-    let long = req.body.long;
-    // let response = axios.post()
-    res.send(req.body)
+    let latitude = req.body.lat;
+    let longitude = req.body.long;
+    // let latitude = -22.007173843864205;
+    // let longitude =  -47.893433403607524;
+    axios.post("http://localhost:8000/drawMap",
+{lat: latitude, long: longitude})
+.then((response) => {
+    res.set("Content-Type", "text/html");
+    res.send(response.data)
+}).catch(error => console.log(error))
+    
 })
   
 app.listen(PORT, (error) =>{ 

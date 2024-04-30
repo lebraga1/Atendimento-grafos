@@ -6,6 +6,16 @@ import matplotlib.pyplot as plt
 import folium
 from matplotlib.collections import LineCollection
 
+from fastapi import FastAPI
+from pydantic import BaseModel
+from fastapi.responses import HTMLResponse
+
+class Item(BaseModel):
+    lat: float
+    long: float
+
+app = FastAPI()
+
 from graph import create_graph
 from busca import a_star_search, bfs_search
 
@@ -47,15 +57,19 @@ def get_lines(G, path):
     print(lines)
     return lines
 
+@app.post("/drawMap", response_class=HTMLResponse)
+async def print_map(item: Item):
+
+# def main():
     
+    # print("Digite 1 para realizar a busca a* ou 2 para largura:")
+    # choice = input()
 
-def main():
-
-    print("Digite 1 para realizar a busca a* ou 2 para largura:")
-    choice = input()
-
-    print("Digite a latitude e longitude para o ponto de início (formato: lat, lon):")
-    lat, lon = map(float, input().split(','))
+    # print("Digite a latitude e longitude para o ponto de início (formato: lat, lon):")
+    # lat, lon = map(float, input().split(','))
+    
+    lat = item.lat
+    lon = item.long
 
     try:
     
@@ -89,10 +103,10 @@ def main():
                 
                 print(f"Calculando caminho para o local de interesse em {goal_node}...")    
                 
-                if choice == '1': # A* search
-                    path, cost = a_star_search(G, start_node, goal_node) 
-                if choice == '2': # BFS search
-                    path, cost = bfs_search(G, start_node, goal_node)
+                # if choice == '1': # A* search
+                path, cost = a_star_search(G, start_node, goal_node) 
+                # if choice == '2': # BFS search
+                #     path, cost = bfs_search(G, start_node, goal_node)
                 if cost < min_path_cost: # Atualizar o melhor caminho encontrado
                     min_path_cost = cost
                     best_path = path
@@ -108,7 +122,8 @@ def main():
 
             lines = get_lines(G, best_path)
             m = plot_path_on_map(lines)
-            m.save('path.html')
+            html_string = m.get_root().render()
+            return HTMLResponse(content = html_string, status_code=200)
             
            
         else:
