@@ -36,5 +36,5 @@ def create_graph(filepath):
         distance = ox.distance.great_circle(G.nodes[nearest_node]['y'], G.nodes[nearest_node]['x'], y, x)
         G.add_edge(idx, nearest_node, weight=distance)  # Usa a distância como peso
 
-    ox.plot_graph(G)
+   # ox.plot_graph(G)
     return G
