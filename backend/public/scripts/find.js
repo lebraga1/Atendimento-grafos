@@ -2,7 +2,9 @@ let buttonEl = document.querySelector("#calcula");
 let toastEl = document.querySelector('#toast-default');
 let closeEl = document.querySelector('#close');
 
-let getLocationPromise = new Promise((resolve, reject) => {
+
+
+let getLocationPromise = new Promise((resolve, reject) => { // Pega a localização do usuário
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function (position) {
 
@@ -20,21 +22,21 @@ let getLocationPromise = new Promise((resolve, reject) => {
     }
 })
 
-async function calcProximity() {
+async function calcProximity() { // Envia a localização do usuário para o backend e recebe o mapa
     let coords = {}
-    let location = await getLocationPromise;
-    coords = location;
-    fetch('http://localhost:3000/map', {
-        method: "POST",
-        headers: {
+    let location = await getLocationPromise; // Pega a localização do usuário
+    coords = location; // Adiciona a localização do usuário ao objeto coords
+    fetch('http://localhost:3000/map', { 
+        method: "POST", 
+        headers: { 
             "Content-Type": "application/json"
         },
         body: JSON.stringify(coords)
     }
-    ).then(response => {
+    ).then(response => { // Recebe o mapa
         return response.text();
     })
-    .then(html => {
+    .then(html => { // Cria um link para download do mapa
         let parser = new DOMParser();
         let doc = parser.parseFromString(html, "text/html");
         console.log(doc);
@@ -47,7 +49,7 @@ async function calcProximity() {
         document.body.removeChild(linkEL);
 
     })
-    .catch(error => {
+    .catch(error => { 
         console.error(error);
     })
     toastEl.classList.remove('opacity-0');

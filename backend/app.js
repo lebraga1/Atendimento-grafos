@@ -4,15 +4,15 @@ const axios = require("axios");
 const bodyParser = require("body-parser");
 
 const app = express(); 
-const PORT = 3000; 
+const PORT = 3000; // Porta que o servidor vai rodar
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json()); 
+app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get("/", (req, res) => { res.sendFile(__dirname + "/public/index.html") });
 
-app.post('/map', (req, res) => {
+app.post('/map', (req, res) => { 
     let latitude = req.body.lat;
     let longitude = req.body.long;
     // let latitude = -22.007173843864205;
